@@ -1121,10 +1121,10 @@ footer{background:rgba(255,255,255,.02);border-top:1px solid var(--wire);padding
   /* destination flag chips: slightly tighter on narrow phones, still tappable */
   .flag-icon{width:1.75rem;height:1.75rem;font-size:1.25rem}
   .yp-dest-opt{gap:.5rem;padding:.65rem 1.25rem .65rem .85rem}
-  /* world-map country-reveal chip: stays compact and never overflows the canvas */
-  .country-chip{padding:.32rem .7rem .32rem .32rem;gap:.4rem;max-width:min(80vw,16rem)}
-  .country-chip .flag-icon{width:1.5rem;height:1.5rem}
-  .country-chip .country-name{font-size:.75rem;white-space:normal}
+  /* world-map country-reveal chip: bigger + anchored, easy to read on a phone */
+  .country-chip{padding:.5rem .95rem .5rem .4rem;gap:.55rem;max-width:min(88vw,18rem)}
+  .country-chip .flag-icon{width:2rem;height:2rem}
+  .country-chip .country-name{font-size:.875rem;white-space:normal;font-weight:800}
 }
 /* very short landscape phones: let the gated section scroll internally if needed */
 @media(max-height:560px){
@@ -3829,94 +3829,122 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
     const svg=flagHTML(iso2);
     ttFlag.innerHTML = svg || '<span style="font-size:1.125rem">🏳️</span>';
     if(svg){const svgEl=ttFlag.querySelector('svg');if(svgEl){svgEl.style.width='100%';svgEl.style.height='100%';svgEl.style.borderRadius='50%';svgEl.style.objectFit='cover';svgEl.setAttribute('preserveAspectRatio','xMidYMid slice');}}
-    // measure the wrapper + the chip itself so we can keep it fully on-screen;
-    // on mobile the globe spans nearly the full viewport width, so an
-    // unclamped tap near the edge pushed the flag/name chip partly off-screen
-    // (clipped by overflow-x:clip), which is why it didn't match desktop.
     const wrap=cv.parentElement;
     const wrapW=wrap.offsetWidth, wrapH=wrap.offsetHeight;
-    const pad=8;
-    tooltip.style.left=x+'px';tooltip.style.top=y+'px';
+    // on small screens, anchor the card to a fixed, thumb-friendly spot near
+    // the bottom of the globe instead of the exact tap point — a fingertip
+    // is imprecise and the card following the tap 1:1 made it easy for the
+    // card to land under the finger itself or clip a screen edge, which is
+    // why it looked "missing" on phones even when the tap registered fine.
+    const compact = wrapW<420;
+    let px=x, py=y;
+    if(compact){
+      px=wrapW/2;
+      py=wrapH-14;
+    }
+    tooltip.style.left=px+'px';tooltip.style.top=py+'px';
+    // measure the chip itself so we can keep it fully inside the globe frame
     const tw=tooltip.offsetWidth||0, th=tooltip.offsetHeight||0;
-    const half=tw/2;
+    const pad=8, half=tw/2;
     const minX=Math.min(half+pad, wrapW/2), maxX=Math.max(minX, wrapW-half-pad);
-    const minY=Math.min(th*1.2+pad, wrapH), maxY=Math.max(minY, wrapH-pad);
-    const clampedX=Math.min(Math.max(x,minX),maxX);
-    const clampedY=Math.min(Math.max(y,minY),maxY);
-    tooltip.style.left=clampedX+'px';tooltip.style.top=clampedY+'px';
+    const minY=Math.min(th*1.35+pad, wrapH), maxY=Math.max(minY, wrapH-pad);
+    px=Math.min(Math.max(px,minX),maxX);
+    py=Math.min(Math.max(py,minY),maxY);
+    tooltip.style.left=px+'px';tooltip.style.top=py+'px';
     tooltip.classList.add('show');
   }
   function hideTooltip(){tooltip.classList.remove('show');}
 
+  function doHitTest(x,y){
+    const coord=projection.invert([x,y]);
+    let hit=false;
+    // only test if the tap actually landed on the visible globe disc
+    const onGlobe = coord && isFinite(coord[0]) && isFinite(coord[1]);
+    if(onGlobe){
+      // check hub pulse markers first (generous hit radius for fingertips)
+      for(const h of HUBS){
+        const dist=d3.geoDistance([-rotation[0],-rotation[1]],[h.lon,h.lat]);
+        if(dist>=Math.PI/2)continue;
+        const p=projection([h.lon,h.lat]);
+        if(p && Math.hypot(p[0]-x,p[1]-y)<18){
+          showTooltip(p[0],p[1],h.iso2,h.name);hit=true;break;
+        }
+      }
+      if(!hit){
+        for(const f of countries){
+          if(d3.geoContains(f,coord)){
+            highlighted=f;
+            const lbl=countryLabel(f);
+            showTooltip(x,y,lbl.iso2,lbl.name);
+            hit=true;break;
+          }
+        }
+      }
+    }
+    if(!hit){highlighted=null;hideTooltip();} // ocean or outside the globe: no card
+  }
 
   // ── drag to rotate 360°, tap to reveal a country's flag; taps on ocean/empty space show nothing ──
-  // NOTE: tap detection is based on total finger travel from pointerdown to
-  // pointerup (not accumulated e.movementX/Y deltas). movementX/Y is
-  // unreliable for touch-derived pointer events on many mobile browsers —
-  // it can report an inflated first delta — which was making every tap on
-  // a phone get misclassified as a drag, so the country hit-test (and the
-  // flag/name card) never ran on mobile.
-  let ptrDown=null,lastPt=null;
-  cv.addEventListener('pointerdown',e=>{
-    cv.setPointerCapture(e.pointerId);
-    ptrDown={x:e.clientX,y:e.clientY,t:Date.now()};
-    lastPt={x:e.clientX,y:e.clientY};
+  // Built on plain touch + mouse events rather than the Pointer Events API:
+  // some mobile browsers and in-app webviews (Instagram/Facebook/etc.) have
+  // inconsistent Pointer Events support — pointerup can silently fail to
+  // fire, or setPointerCapture can throw — which was silently breaking tap
+  // detection on those devices even though the globe itself rendered fine.
+  let downPt=null,lastPt=null;
+
+  function pointFromEvent(e){
+    if(e.touches && e.touches.length) return {x:e.touches[0].clientX,y:e.touches[0].clientY};
+    if(e.changedTouches && e.changedTouches.length) return {x:e.changedTouches[0].clientX,y:e.changedTouches[0].clientY};
+    return {x:e.clientX,y:e.clientY};
+  }
+
+  function onDown(e){
+    const p=pointFromEvent(e);
+    downPt={x:p.x,y:p.y,t:Date.now()};
+    lastPt={x:p.x,y:p.y};
     dragging=true;autoRot=false;
     if(resumeT)clearTimeout(resumeT);
-  });
-  cv.addEventListener('pointermove',e=>{
-    if(!ptrDown||!lastPt)return;
-    const dx=e.clientX-lastPt.x, dy=e.clientY-lastPt.y;
-    lastPt={x:e.clientX,y:e.clientY};
+    // stop this from also emitting a delayed synthetic mousedown/mouseup,
+    // which would otherwise re-run the tap logic a second time
+    if(e.type==='touchstart' && e.cancelable)e.preventDefault();
+  }
+  function onMove(e){
+    if(!downPt||!lastPt)return;
+    const p=pointFromEvent(e);
+    const dx=p.x-lastPt.x, dy=p.y-lastPt.y;
+    lastPt={x:p.x,y:p.y};
     if(dx||dy){
       rotation[0]+=dx*.3;
       rotation[1]=clamp(rotation[1]-dy*.3,-85,85);
       projection.rotate(rotation);
     }
-  });
-  function endDrag(e){
-    if(!ptrDown)return;
+    if(e.cancelable)e.preventDefault();
+  }
+  function onUp(e,cancelled){
+    if(!downPt)return;
     dragging=false;
-    const dt=Date.now()-ptrDown.t;
-    const totalMoved=Math.hypot(e.clientX-ptrDown.x,e.clientY-ptrDown.y);
-    // only a genuine release (not a cancelled gesture) within a small travel
-    // radius and reasonable duration counts as a tap
-    if(e.type==='pointerup' && totalMoved<10 && dt<600){
+    const p=pointFromEvent(e);
+    const dt=Date.now()-downPt.t;
+    const totalMoved=Math.hypot(p.x-downPt.x,p.y-downPt.y);
+    // a genuine release, within a small travel radius and reasonable
+    // duration, counts as a tap — otherwise it was a drag-to-rotate
+    if(!cancelled && totalMoved<12 && dt<700){
       const r=cv.getBoundingClientRect();
-      const x=e.clientX-r.left, y=e.clientY-r.top;
-      const coord=projection.invert([x,y]);
-      let hit=false;
-      // only test if the tap actually landed on the visible globe disc
-      const onGlobe = coord && isFinite(coord[0]) && isFinite(coord[1]);
-      if(onGlobe){
-        // check hub pulse markers first (generous hit radius for fingertips)
-        for(const h of HUBS){
-          const dist=d3.geoDistance([-rotation[0],-rotation[1]],[h.lon,h.lat]);
-          if(dist>=Math.PI/2)continue;
-          const p=projection([h.lon,h.lat]);
-          if(p && Math.hypot(p[0]-x,p[1]-y)<16){
-            showTooltip(p[0],p[1],h.iso2,h.name);hit=true;break;
-          }
-        }
-        if(!hit){
-          for(const f of countries){
-            if(d3.geoContains(f,coord)){
-              highlighted=f;
-              const lbl=countryLabel(f);
-              showTooltip(x,y,lbl.iso2,lbl.name);
-              hit=true;break;
-            }
-          }
-        }
-      }
-      if(!hit){highlighted=null;hideTooltip();} // ocean or outside the globe: no card
+      doHitTest(p.x-r.left,p.y-r.top);
     }
-    ptrDown=null;lastPt=null;
+    downPt=null;lastPt=null;
     resumeT=setTimeout(()=>{autoRot=true;},1000);
   }
-  cv.addEventListener('pointerup',endDrag);
-  cv.addEventListener('pointercancel',endDrag);
-  cv.addEventListener('pointerleave',()=>{if(!dragging)hideTooltip();});
+
+  cv.addEventListener('touchstart',onDown,{passive:false});
+  cv.addEventListener('touchmove',onMove,{passive:false});
+  cv.addEventListener('touchend',e=>onUp(e,false),{passive:true});
+  cv.addEventListener('touchcancel',e=>onUp(e,true),{passive:true});
+
+  cv.addEventListener('mousedown',onDown);
+  addEventListener('mousemove',onMove);
+  addEventListener('mouseup',e=>onUp(e,false));
+  cv.addEventListener('mouseleave',()=>{if(!dragging)hideTooltip();});
 
   function frame(){
     tick++;
