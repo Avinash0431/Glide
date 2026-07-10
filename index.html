@@ -56,8 +56,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 .nav-cta-short{display:none}
 @media(max-width:400px){
-  .nav-cta-full{display:none}
-  .nav-cta-short{display:inline}
+  .nav-cta{padding:.4rem .65rem;font-size:.5625rem;gap:.25rem}
 }
 
 #mode-pill{position:fixed;bottom:1.5rem;right:1.5rem;z-index:8000;display:flex;align-items:center;gap:.625rem;background:rgba(5,5,8,.9);border:1px solid var(--wire);border-radius:100px;padding:.5rem .875rem;backdrop-filter:blur(20px);cursor:pointer;user-select:none;opacity:0;pointer-events:none;transition:opacity .6s,border-color .25s;box-shadow:0 8px 32px rgba(0,0,0,.6)}
@@ -3830,10 +3829,25 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
     const svg=flagHTML(iso2);
     ttFlag.innerHTML = svg || '<span style="font-size:1.125rem">🏳️</span>';
     if(svg){const svgEl=ttFlag.querySelector('svg');if(svgEl){svgEl.style.width='100%';svgEl.style.height='100%';svgEl.style.borderRadius='50%';svgEl.style.objectFit='cover';svgEl.setAttribute('preserveAspectRatio','xMidYMid slice');}}
+    // measure the wrapper + the chip itself so we can keep it fully on-screen;
+    // on mobile the globe spans nearly the full viewport width, so an
+    // unclamped tap near the edge pushed the flag/name chip partly off-screen
+    // (clipped by overflow-x:clip), which is why it didn't match desktop.
+    const wrap=cv.parentElement;
+    const wrapW=wrap.offsetWidth, wrapH=wrap.offsetHeight;
+    const pad=8;
     tooltip.style.left=x+'px';tooltip.style.top=y+'px';
+    const tw=tooltip.offsetWidth||0, th=tooltip.offsetHeight||0;
+    const half=tw/2;
+    const minX=Math.min(half+pad, wrapW/2), maxX=Math.max(minX, wrapW-half-pad);
+    const minY=Math.min(th*1.2+pad, wrapH), maxY=Math.max(minY, wrapH-pad);
+    const clampedX=Math.min(Math.max(x,minX),maxX);
+    const clampedY=Math.min(Math.max(y,minY),maxY);
+    tooltip.style.left=clampedX+'px';tooltip.style.top=clampedY+'px';
     tooltip.classList.add('show');
   }
   function hideTooltip(){tooltip.classList.remove('show');}
+
 
   // ── drag to rotate 360°, tap to reveal a country's flag; taps on ocean/empty space show nothing ──
   let ptrDown=null,moved=0;
