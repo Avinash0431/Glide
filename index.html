@@ -3850,17 +3850,25 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
 
 
   // ── drag to rotate 360°, tap to reveal a country's flag; taps on ocean/empty space show nothing ──
-  let ptrDown=null,moved=0;
+  // NOTE: tap detection is based on total finger travel from pointerdown to
+  // pointerup (not accumulated e.movementX/Y deltas). movementX/Y is
+  // unreliable for touch-derived pointer events on many mobile browsers —
+  // it can report an inflated first delta — which was making every tap on
+  // a phone get misclassified as a drag, so the country hit-test (and the
+  // flag/name card) never ran on mobile.
+  let ptrDown=null,lastPt=null;
   cv.addEventListener('pointerdown',e=>{
     cv.setPointerCapture(e.pointerId);
-    ptrDown={x:e.clientX,y:e.clientY,t:Date.now()};moved=0;dragging=true;autoRot=false;
+    ptrDown={x:e.clientX,y:e.clientY,t:Date.now()};
+    lastPt={x:e.clientX,y:e.clientY};
+    dragging=true;autoRot=false;
     if(resumeT)clearTimeout(resumeT);
   });
   cv.addEventListener('pointermove',e=>{
-    if(!ptrDown)return;
-    const dx=e.movementX||0, dy=e.movementY||0;
-    if(Math.abs(dx)+Math.abs(dy)>0){
-      moved+=Math.abs(dx)+Math.abs(dy);
+    if(!ptrDown||!lastPt)return;
+    const dx=e.clientX-lastPt.x, dy=e.clientY-lastPt.y;
+    lastPt={x:e.clientX,y:e.clientY};
+    if(dx||dy){
       rotation[0]+=dx*.3;
       rotation[1]=clamp(rotation[1]-dy*.3,-85,85);
       projection.rotate(rotation);
@@ -3870,7 +3878,10 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
     if(!ptrDown)return;
     dragging=false;
     const dt=Date.now()-ptrDown.t;
-    if(moved<6 && dt<400){ // treat as a tap, not a drag, do country hit-test
+    const totalMoved=Math.hypot(e.clientX-ptrDown.x,e.clientY-ptrDown.y);
+    // only a genuine release (not a cancelled gesture) within a small travel
+    // radius and reasonable duration counts as a tap
+    if(e.type==='pointerup' && totalMoved<10 && dt<600){
       const r=cv.getBoundingClientRect();
       const x=e.clientX-r.left, y=e.clientY-r.top;
       const coord=projection.invert([x,y]);
@@ -3878,12 +3889,12 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
       // only test if the tap actually landed on the visible globe disc
       const onGlobe = coord && isFinite(coord[0]) && isFinite(coord[1]);
       if(onGlobe){
-        // check hub pulse markers first (small hit radius, reliable label)
+        // check hub pulse markers first (generous hit radius for fingertips)
         for(const h of HUBS){
           const dist=d3.geoDistance([-rotation[0],-rotation[1]],[h.lon,h.lat]);
           if(dist>=Math.PI/2)continue;
           const p=projection([h.lon,h.lat]);
-          if(p && Math.hypot(p[0]-x,p[1]-y)<10){
+          if(p && Math.hypot(p[0]-x,p[1]-y)<16){
             showTooltip(p[0],p[1],h.iso2,h.name);hit=true;break;
           }
         }
@@ -3900,7 +3911,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
       }
       if(!hit){highlighted=null;hideTooltip();} // ocean or outside the globe: no card
     }
-    ptrDown=null;
+    ptrDown=null;lastPt=null;
     resumeT=setTimeout(()=>{autoRot=true;},1000);
   }
   cv.addEventListener('pointerup',endDrag);
