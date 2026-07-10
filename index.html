@@ -1178,12 +1178,11 @@ footer{background:rgba(255,255,255,.02);border-top:1px solid var(--wire);padding
 <nav id="nav">
   <div class="nav-logo">Glide</div>
   <ul class="nav-links" id="navLinks">
-    <li><a href="#story" data-nav="story">Story</a></li>
     <li><a href="#brief" data-nav="brief">Pain</a></li>
-    <li><a href="#research" data-nav="research">Research</a></li>
-    <li><a href="#insight" data-nav="insight">Insight</a></li>
-    <li><a href="#prototype" data-nav="prototype">Prototype</a></li>
-    <li><a href="#didnt-make" data-nav="didnt-make">Decisions</a></li>
+    <li><a href="#root-cause" data-nav="root-cause">Insight</a></li>
+    <li><a href="#why" data-nav="why">Solution</a></li>
+    <li data-pm><a href="#metrics" data-nav="metrics">Growth</a></li>
+    <li data-pm><a href="#econ" data-nav="econ">Economics</a></li>
     <li><a href="#closing" data-nav="closing">About</a></li>
   </ul>
   <a href="https://avinash0431.github.io/beyond-my-resume/" target="_blank" class="nav-cta"><span class="nav-cta-full">Beyond My Resume</span><span class="nav-cta-short">Portfolio</span></a>
@@ -1192,12 +1191,11 @@ footer{background:rgba(255,255,255,.02);border-top:1px solid var(--wire);padding
   </button>
 </nav>
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#story" data-nav="story">Story</a>
   <a href="#brief" data-nav="brief">Pain</a>
-  <a href="#research" data-nav="research">Research</a>
-  <a href="#insight" data-nav="insight">Insight</a>
-  <a href="#prototype" data-nav="prototype">Prototype</a>
-  <a href="#didnt-make" data-nav="didnt-make">Decisions</a>
+  <a href="#root-cause" data-nav="root-cause">Insight</a>
+  <a href="#why" data-nav="why">Solution</a>
+  <a href="#metrics" data-nav="metrics" data-pm>Growth</a>
+  <a href="#econ" data-nav="econ" data-pm>Economics</a>
   <a href="#closing" data-nav="closing">About</a>
 </div>
 
@@ -2565,7 +2563,7 @@ document.querySelectorAll('[data-reveal]').forEach(el=>revealObs.observe(el));
 
 /* ─── NAV ACTIVE-SECTION HIGHLIGHT ─── */
 const navLinkEls=document.querySelectorAll('#navLinks a[data-nav], #mobileMenu a[data-nav]');
-const navSpySections=['story','brief','research','insight','prototype','didnt-make','closing']
+const navSpySections=['brief','root-cause','why','metrics','econ','closing']
   .map(id=>document.getElementById(id)).filter(Boolean);
 if(navLinkEls.length && navSpySections.length){
   const navSpyObs=new IntersectionObserver(entries=>{
