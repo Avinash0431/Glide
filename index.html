@@ -263,7 +263,7 @@ span[data-pm],span[data-ex]{display:none}
 #competitor{background:var(--black);padding:8rem 0;color:var(--ink)}
 #competitor .eyebrow{color:var(--teal)}#competitor .eyebrow::before{background:var(--teal)}
 #competitor .section-title{color:var(--ink)}#competitor .section-sub{color:var(--muted)}
-.ct-wrap{background:rgba(255,255,255,.02);border:1px solid var(--wire);border-radius:1.25rem;overflow-x:auto;margin-top:3rem;box-shadow:0 2px 16px rgba(0,0,0,.3)}
+.ct-wrap{background:rgba(255,255,255,.02);border:1px solid var(--wire);border-radius:1.25rem;overflow-x:auto;margin-top:3rem;box-shadow:0 2px 16px rgba(0,0,0,.3);-webkit-overflow-scrolling:touch}
 .ct{width:100%;border-collapse:collapse;min-width:38rem}
 .ct th{background:rgba(255,255,255,.03);padding:.875rem 1.125rem;font-size:.5rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);text-align:left;border-bottom:1px solid var(--wire);white-space:nowrap}
 .ct td{padding:.875rem 1.125rem;font-size:.875rem;border-bottom:1px solid rgba(255,255,255,.05);color:var(--ink)}
@@ -739,7 +739,7 @@ footer{background:rgba(255,255,255,.02);border-top:1px solid var(--wire);padding
 }
 
 /* DECISION TIMELINE (PM thinking) */
-.dec-timeline{display:flex;align-items:stretch;gap:0;margin-top:3rem;overflow-x:auto;scrollbar-width:none;padding-bottom:.5rem}
+.dec-timeline{display:flex;align-items:stretch;gap:0;margin-top:3rem;overflow-x:auto;scrollbar-width:none;padding-bottom:.5rem;-webkit-overflow-scrolling:touch}
 .dec-timeline::-webkit-scrollbar{display:none}
 .dec-stage{flex:1;min-width:8.5rem;position:relative;padding:0 .5rem}
 .dec-stage::before{content:'';position:absolute;top:1.0625rem;left:50%;right:-50%;height:2px;background:var(--wire);z-index:0}
@@ -2529,6 +2529,34 @@ const easeInOut = t => t < .5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2;
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let MX = innerWidth / 2, MY = innerHeight / 2, curX = MX, curY = MY;
 
+/* Every canvas-driven scroll animation on this page used to call
+   requestAnimationFrame(frame) forever, unconditionally, even long after its
+   own section had scrolled miles out of view. With 8 of these running at once
+   that's a lot of wasted paint work competing for frame budget on every
+   scroll, and it's the main reason mobile scrolling felt heavy. This wraps a
+   frame() loop so it only keeps running while its section is anywhere near
+   the viewport, and cleanly resumes the moment it scrolls back into range. */
+function gatedLoop(sectionEl, frameFn){
+  let running = true, rafId = null;
+  function tick(){
+    frameFn();
+    if(running) rafId = requestAnimationFrame(tick);
+  }
+  if(!sectionEl || !('IntersectionObserver' in window)){
+    tick();
+    return;
+  }
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      const wasRunning = running;
+      running = e.isIntersecting;
+      if(running && !wasRunning) tick();
+    });
+  }, {rootMargin:'300px 0px 300px 0px'});
+  io.observe(sectionEl);
+  tick();
+}
+
 /* ─── BARCODE ─── */
 (function(){const c=document.getElementById('barcode-lines');if(!c)return;
 const widths=[2,1,3,1,2,1,1,3,1,2,3,1,2,1,1,2,3,1,1,2,1,3,2,1,1,3,1,2,1,2];
@@ -2677,7 +2705,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
 
   // typed script, each line maps to a scroll window [start,end]
   const SCRIPT=[
-    {t:"Imagine you've finally decided…", a:0.03, b:0.16},
+    {t:"Imagine you've finally decided…", a:0, b:0.16},
     {t:"This year, you're going on the trip you've dreamed about for years.", a:0.16, b:0.40},
     {t:"Everything starts with one search. So go ahead, plan it.", a:0.74, b:0.92},
   ];
@@ -2854,15 +2882,13 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
     // hint visibility
     if(hint)hint.style.display = (p<0.95) ? 'block' : 'none';
     if(skip)skip.style.opacity = (1-seg(p,0.0,0.12)).toFixed(3);
-
-    requestAnimationFrame(frame);
   }
   // start planning → jump to the interactive pain section
   if(skip)skip.addEventListener('click',()=>{
     const yp=document.getElementById('youplan');
     if(yp)yp.scrollIntoView({behavior:'smooth',block:'start'});
   });
-  frame();
+  gatedLoop(sec, frame);
 })();
 
 /* ═══════════════════════════════════════════════════════════
@@ -3108,11 +3134,9 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
 
     // PUNCHLINE (comes right after black, no long dead scroll)
     if(punch)punch.style.opacity=seg(p,.80,.92).toFixed(3);
-
-    requestAnimationFrame(frame);
   }
   setTimeout(()=>{if(bp)bp.style.transition='none';},50);
-  frame();
+  gatedLoop(sec, frame);
 })();
 
 /* ═══ §1 STORY PORTRAIT, abstract traveller silhouette, calm → tabs creep in ═══ */
@@ -3243,9 +3267,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
     fg.addColorStop(0,'rgba(120,180,255,1)');fg.addColorStop(1,'transparent');
     cx.fillStyle=fg;cx.beginPath();cx.arc(0,-90*sc,60*sc,0,TAU);cx.fill();cx.restore();
 
-    cx.restore();
-    requestAnimationFrame(frame);}
-  frame();
+    cx.restore();}
+  gatedLoop(cv, frame);
 })();
 
 /* ═══════════════════════════════════════════════════════════
@@ -3676,9 +3699,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
       const a=nodes[i],b=nodes[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy);
       if(d<128){cx.strokeStyle=`rgba(30,111,255,${(1-d/128)*.22})`;cx.lineWidth=.6;
         cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.stroke();}}
-    nodes.forEach(n=>{cx.beginPath();cx.arc(n.x,n.y,n.r,0,TAU);cx.fillStyle='rgba(0,212,180,.45)';cx.fill();});
-    requestAnimationFrame(frame);}
-  frame();
+    nodes.forEach(n=>{cx.beginPath();cx.arc(n.x,n.y,n.r,0,TAU);cx.fillStyle='rgba(0,212,180,.45)';cx.fill();});}
+  gatedLoop(cv, frame);
 })();
 
 /* ═══ §8 GLIDE REVEAL, scattered apps fly INWARD + MERGE → logo earned ═══
@@ -3777,9 +3799,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
     if(center){center.style.opacity=logoP.toFixed(3);
       center.style.transform=`translateY(${lerp(20,0,logoP)}px) scale(${lerp(.92,1,logoP)})`;}
     if(hint)hint.style.opacity=(1-seg(p,.05,.25)).toFixed(3);
-
-    requestAnimationFrame(frame);}
-  frame();
+  }
+  gatedLoop(sec, frame);
 })();
 
 /* ═══ §9 WHY, real-geometry rotatable world map + flag reveal (fully self-contained, no runtime fetch) ═══ */
@@ -3986,9 +4007,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
     pts.forEach((p,i)=>{if(!p.vis)return;const pulse=.5+.5*Math.sin(tick*.05+i);
       cx.beginPath();cx.arc(p.x,p.y,2+pulse*1.5,0,TAU);cx.fillStyle=`rgba(0,212,180,${.5+pulse*.5})`;cx.fill();
       cx.beginPath();cx.arc(p.x,p.y,5+pulse*4,0,TAU);cx.strokeStyle=`rgba(0,212,180,${.2*pulse})`;cx.lineWidth=1;cx.stroke();});
-
-    requestAnimationFrame(frame);}
-  frame();
+  }
+  gatedLoop(cv, frame);
 })();
 
 /* ─── STATIC FLAGS: populate destination-picker chips from embedded FLAG_SVGS (no network needed) ─── */
@@ -4078,10 +4098,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
       cx.fillStyle=cg;cx.fill();
       cx.font='bold 13px Inter';cx.fillStyle='#fff';cx.textAlign='center';cx.textBaseline='middle';cx.fillText('✦',cxp,cyp);
       cx.restore();}
-
-    requestAnimationFrame(frame);
   }
-  frame();
+  gatedLoop(cv, frame);
 })();
 
 /* ═══════════════════════════════════════════════════════════
@@ -4270,10 +4288,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click'
 
     // ---- reflection question ----
     if(reflect) reflect.style.opacity = reflP>0 ? easeOut(reflP).toFixed(2) : '0';
-
-    requestAnimationFrame(frame);
   }
-  frame();
+  gatedLoop(sec, frame);
 
   // last-frame reveal (after the pinned stage scrolls away)
   const last=document.getElementById('fin-last');
