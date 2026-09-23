@@ -1696,7 +1696,6 @@
       transform: translateY(-2px);
     }
     
-    /* Fix 1: Wrap top bar elements neatly on all viewports */
     .adr-card-top-bar {
       display: flex;
       justify-content: space-between;
@@ -2274,7 +2273,6 @@
       flex-direction: column;
     }
     
-    /* Fix 2: Clean single-line header row for North Star metrics */
     .dash-tile-header {
       display: flex;
       justify-content: space-between;
@@ -2333,107 +2331,42 @@
       margin-top: auto;
     }
 
-    .econ-formula-dark {
-      background: var(--surface-flat);
+    /* What Changed My Mind (Dark Canvas) */
+    .mind-flips-dark { display: grid; gap: 16px; margin-top: 32px; }
+    .flip-dark {
+      background: 
+        radial-gradient(ellipse at 50% 0%, rgba(34, 181, 155, 0.06) 0%, transparent 75%),
+        linear-gradient(180deg, rgba(22, 33, 52, 0.75) 0%, rgba(10, 15, 24, 0.95) 100%);
       border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: 12px;
-      padding: 26px;
-      margin: 32px 0;
-      box-shadow: var(--glass-shadow);
-    }
-    .econ-formula-flow-dark {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 14px;
-      justify-content: center;
-      margin: 16px 0;
-    }
-    .ef-num-dark {
-      font-family: var(--font-serif);
-      font-size: 1.9rem;
-      color: var(--white);
-      line-height: 1;
-      display: block;
-    }
-    .ef-step-dark.final .ef-num-dark {
-      color: var(--signal-bright);
-      font-size: 2.5rem;
-      font-weight: 700;
-    }
-    .ef-lbl-dark {
-      font-size: 0.68rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: var(--muted-dim);
-    }
-    .econ-grid-dark {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-    }
-    .econ-card-dark {
-      background: var(--surface-flat);
-      border: 1px solid rgba(255, 255, 255, 0.10);
-      border-radius: 10px;
-      padding: 22px;
-      box-shadow: var(--glass-shadow);
-    }
-    .econ-card-title-dark {
-      font-family: var(--font-serif);
-      font-size: 1.25rem;
-      color: var(--white);
-      margin-bottom: 12px;
-      display: block;
-    }
-    .econ-row-dark {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.82rem;
-      padding: 7px 0;
-      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
-      color: var(--muted);
-    }
-    .econ-val-good-dark { color: var(--signal-bright) !important; font-weight: 800; }
-    .econ-note-dark {
-      font-size: 0.78rem;
-      color: var(--muted-dim);
-      margin-top: 14px;
-      line-height: 1.45;
-    }
-
-    .mind-flips-paper { display: grid; gap: 16px; margin-top: 32px; }
-    .flip-paper {
-      background: #FFFFFF;
-      border: 1px solid var(--paper-border);
-      border-radius: 10px;
       padding: 22px;
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       gap: 20px;
       align-items: center;
-      box-shadow: 0 4px 14px rgba(12, 16, 24, 0.04);
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.14), 0 16px 36px -10px rgba(0, 0, 0, 0.6);
     }
-    @media (max-width: 768px) { .flip-paper { grid-template-columns: 1fr; } }
-    .flip-lbl-paper {
+    @media (max-width: 768px) { .flip-dark { grid-template-columns: 1fr; } }
+    .flip-lbl-dark {
       font-size: 0.68rem;
       font-weight: 800;
       text-transform: uppercase;
-      color: var(--paper-sub);
+      color: var(--muted-dim);
       margin-bottom: 4px;
     }
-    .flip-txt-paper { font-size: 0.92rem; color: var(--paper-text); }
-    .flip-arrow-paper { color: var(--signal-deep); font-size: 1.4rem; font-weight: 800; text-align: center; }
-    .flip-evidence-paper {
+    .flip-txt-dark { font-size: 0.92rem; color: var(--white); }
+    .flip-arrow-dark { color: var(--signal-bright); font-size: 1.4rem; font-weight: 800; text-align: center; }
+    .flip-evidence-dark {
       grid-column: 1 / -1;
       font-size: 0.82rem;
-      color: var(--signal-deep);
-      border-top: 1px dashed rgba(12, 16, 24, 0.1);
+      color: var(--signal-bright);
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
       padding-top: 10px;
       margin-top: 6px;
       font-weight: 600;
     }
 
+    /* Executive Summary / Product Leadership (Paper Canvas) */
     .hire-stage-container {
       margin-top: 36px;
       display: flex;
@@ -2445,22 +2378,20 @@
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 18px;
     }
-    .hire-pillar-card {
-      background: 
-        radial-gradient(circle at 10% 0%, rgba(34, 181, 155, 0.12) 0%, transparent 60%),
-        linear-gradient(180deg, rgba(20, 29, 44, 0.85) 0%, rgba(10, 15, 24, 0.95) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-top: 1px solid rgba(255, 255, 255, 0.22);
+    .hire-pillar-card-paper {
+      background: #FFFFFF;
+      border: 1px solid var(--paper-border);
       border-radius: 14px;
       padding: 24px;
-      box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.65);
+      box-shadow: 0 4px 16px rgba(12, 16, 24, 0.04);
       transition: all .25s ease;
     }
-    .hire-pillar-card:hover {
+    .hire-pillar-card-paper:hover {
       transform: translateY(-2px);
-      border-color: var(--signal-bright);
+      border-color: var(--signal-deep);
+      box-shadow: 0 10px 24px rgba(14, 102, 86, 0.12);
     }
-    .hire-pillar-badge {
+    .hire-pillar-badge-paper {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -2468,51 +2399,52 @@
       font-weight: 800;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--signal-bright);
+      color: var(--signal-deep);
       margin-bottom: 12px;
     }
-    .hire-pillar-title {
+    .hire-pillar-badge-paper .audit-dot {
+      background: var(--signal-deep);
+    }
+    .hire-pillar-title-paper {
       font-family: var(--font-serif);
       font-size: 1.35rem;
-      color: var(--white);
+      color: var(--paper-text);
       margin-bottom: 8px;
     }
-    .hire-pillar-desc {
+    .hire-pillar-desc-paper {
       font-size: 0.86rem;
-      color: var(--muted);
+      color: var(--paper-muted);
       line-height: 1.55;
     }
-    .hire-takeaway-hero {
-      background: 
-        radial-gradient(ellipse at 90% 50%, rgba(223, 158, 40, 0.15) 0%, transparent 65%),
-        linear-gradient(135deg, rgba(22, 33, 52, 0.85) 0%, rgba(8, 12, 20, 0.98) 100%);
-      border: 1px solid rgba(223, 158, 40, 0.4);
+    .hire-takeaway-paper {
+      background: #FFFFFF;
+      border: 1.5px solid rgba(158, 103, 0, 0.35);
       border-radius: 16px;
       padding: 32px clamp(24px, 4vw, 42px);
       display: grid;
       grid-template-columns: 1.4fr 0.8fr;
       gap: 28px;
       align-items: center;
-      box-shadow: 0 24px 52px -12px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 12px 32px -8px rgba(12, 16, 24, 0.06);
     }
-    @media (max-width: 860px) { .hire-takeaway-hero { grid-template-columns: 1fr; } }
-    .hire-quote-block {
+    @media (max-width: 860px) { .hire-takeaway-paper { grid-template-columns: 1fr; } }
+    .hire-quote-block-paper {
       font-family: var(--font-serif);
       font-size: clamp(1.25rem, 2vw, 1.6rem);
       line-height: 1.35;
-      color: var(--white);
+      color: var(--paper-text);
     }
-    .hire-quote-block em { color: var(--gold-dark-bg); font-style: italic; }
-    .hire-author-block {
+    .hire-quote-block-paper em { color: var(--gold-paper-bg); font-style: italic; }
+    .hire-author-block-paper {
       display: flex;
       flex-direction: column;
-      border-left: 2px solid rgba(223, 158, 40, 0.4);
+      border-left: 2px solid rgba(158, 103, 0, 0.35);
       padding-left: 20px;
     }
-    @media (max-width: 860px) { .hire-author-block { border-left: none; border-top: 1px dashed rgba(255, 255, 255, 0.1); padding-left: 0; padding-top: 16px; } }
-    .hire-author-name { font-size: 1.1rem; font-weight: 800; color: var(--white); }
-    .hire-author-title { font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--signal-bright); margin-top: 2px; }
-    .hire-author-sub { font-size: 0.78rem; color: var(--muted-dim); margin-top: 6px; }
+    @media (max-width: 860px) { .hire-author-block-paper { border-left: none; border-top: 1px dashed rgba(12, 16, 24, 0.15); padding-left: 0; padding-top: 16px; } }
+    .hire-author-name-paper { font-size: 1.1rem; font-weight: 800; color: var(--paper-text); }
+    .hire-author-title-paper { font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--signal-deep); margin-top: 2px; }
+    .hire-author-sub-paper { font-size: 0.78rem; color: var(--paper-sub); margin-top: 6px; }
 
     .fin-cards { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin: 36px 0; }
     .fin-card {
@@ -2548,7 +2480,7 @@
       }
     }
 
-    /* Mobile Polish: Ensure cards and device shell fit perfectly on 360px - 420px viewports */
+    /* Mobile Polish */
     @media (max-width: 420px) {
       .proto-screen-inner-paper {
         min-height: 480px;
@@ -2574,7 +2506,7 @@
 <div id="toast"></div>
 
 <!-- ========================================================
-     01: TOP NAVIGATION BAR (6-LINK LINEAR SEQUENCE)
+     01: TOP NAVIGATION BAR (6-LINK STRICT SEQUENCE)
 ======================================================== -->
 <header>
   <div class="navrow">
@@ -2586,7 +2518,7 @@
       <a href="#synthesis" data-section="synthesis">Strategy</a>
       <a href="#reveal" data-section="reveal">Glide OS</a>
       <a href="#prototype" data-section="prototype">Prototype</a>
-      <a href="#econ" data-section="econ">Economics</a>
+      <a href="#metrics" data-section="metrics">Metrics</a>
     </nav>
 
     <div class="header-tagline">
@@ -2607,7 +2539,7 @@
       <a href="#synthesis" data-section="synthesis" onclick="closeMobileMenu()">Strategy</a>
       <a href="#reveal" data-section="reveal" onclick="closeMobileMenu()">Glide OS</a>
       <a href="#prototype" data-section="prototype" onclick="closeMobileMenu()">Prototype</a>
-      <a href="#econ" data-section="econ" onclick="closeMobileMenu()">Economics</a>
+      <a href="#metrics" data-section="metrics" onclick="closeMobileMenu()">Metrics</a>
     </nav>
     <div class="mobile-drawer-tagline">
       Travel Operating System · Product Case Study by Avinash R
@@ -2617,7 +2549,7 @@
 
 <main>
   <!-- ========================================================
-       02: HERO SECTION
+       02: HERO SECTION (DARK)
   ======================================================== -->
   <section class="section chapter" id="hero" aria-label="Hero">
     <div class="W">
@@ -2668,7 +2600,7 @@
   </section>
 
   <!-- ========================================================
-       03: SECTION 2: THE PLANNING CHAOS SIMULATOR
+       03: PLANNING CHAOS SIMULATOR (PAPER)
   ======================================================== -->
   <section class="section chapter paper-canvas" id="youplan" aria-label="Where do you want to go">
     <div id="youplan-stage" class="W">
@@ -2766,7 +2698,7 @@
   </section>
 
   <!-- ========================================================
-       04: BOARDING PASS TEARING ANIMATION
+       04: BOARDING PASS TEARING ANIMATION (DARK)
   ======================================================== -->
   <section class="section chapter" id="tearing-act" aria-label="The Dream Torn Apart">
     <div class="W">
@@ -2850,7 +2782,7 @@
   </section>
 
   <!-- ========================================================
-       05: PROBLEM (DISCOVERY & AUDIT)
+       05: PROBLEM (DISCOVERY & AUDIT) (PAPER)
   ======================================================== -->
   <section class="section chapter paper-canvas" id="brief">
     <div class="W">
@@ -2863,7 +2795,7 @@
           </p>
 
           <div class="brief-proof">
-            <div><strong>20+</strong>travellers described the same planning anxiety</div>
+            <div><strong>23</strong>travellers across 4 countries described the same planning anxiety</div>
             <div><strong>6</strong>recurring failure points before a booking happens</div>
             <div><strong>1</strong>question underneath: can I trust this plan enough to commit?</div>
           </div>
@@ -2880,7 +2812,7 @@
   </section>
 
   <!-- ========================================================
-       06: PROBLEM DIAGNOSIS
+       06: PROBLEM DIAGNOSIS (DARK)
   ======================================================== -->
   <section class="section chapter" id="problem">
     <div class="W">
@@ -2889,7 +2821,7 @@
         You just lived it. <span class="hl">Here's what broke.</span>
       </h2>
       <p style="color:var(--muted); max-width:68ch; margin-bottom:16px;">
-        Six structural breakdown points verified through 20 customer discovery interviews. Not one person being disorganized, but a repeated product consolidation gap.
+        Six structural breakdown points verified through 23 customer discovery interviews across 4 countries. Not one person being disorganized, but a repeated product consolidation gap.
       </p>
 
       <div class="pain-track-improved">
@@ -2905,7 +2837,7 @@
               <span class="pain-metric-num">4.2</span>
               <span class="pain-metric-lbl">Average Sources Consulted</span>
             </div>
-            <span class="pain-metric-source">Traveler planning-path qualitative audit (n=20)</span>
+            <span class="pain-metric-source">Traveler planning-path qualitative audit (n=23 across 4 countries)</span>
           </div>
 
           <p class="pain-punch-statement">
@@ -3051,7 +2983,7 @@
   </section>
 
   <!-- ========================================================
-       07: SARAH'S STORY & RESEARCH WALL
+       07: SARAH'S STORY & RESEARCH WALL (PAPER)
   ======================================================== -->
   <section class="section chapter paper-canvas" id="research">
     <div class="W">
@@ -3072,7 +3004,7 @@
         </div>
       </div>
 
-      <h3 style="font-size:1.45rem; margin:36px 0 16px; color:var(--paper-text);">Heard before we built · 20+ Interviews</h3>
+      <h3 style="font-size:1.45rem; margin:36px 0 16px; color:var(--paper-text);">Heard before we built · 23 Interviews across 4 countries</h3>
       <div class="research-wall">
         <div class="note">
           <div class="note-who">Power User · Bengaluru</div>
@@ -3192,7 +3124,7 @@
   </section>
 
   <!-- ========================================================
-       08: MARKET GAP & ARCHITECTURE
+       08: MARKET GAP & ARCHITECTURE (DARK)
   ======================================================== -->
   <section class="section chapter" id="competitor">
     <div class="W">
@@ -3366,7 +3298,7 @@
   </section>
 
   <!-- ========================================================
-       09: STRATEGY (SYNTHESIS & DECISION ARCHITECTURE)
+       09: STRATEGY (SYNTHESIS) (PAPER)
   ======================================================== -->
   <section class="merged-synthesis-sec" id="synthesis">
     <div class="W">
@@ -3434,7 +3366,7 @@
             <div class="et-row-chain">
               <div class="et-badge-stage"><span>02</span> Observation</div>
               <div class="et-content-body">
-                <strong>7 of 20 interviewees</strong> raised visa anxiety unprompted. None could estimate their approval odds, and 4 delayed booking flights solely out of immigration fear.
+                <strong>8 of 23 interviewees</strong> raised visa anxiety unprompted. None could estimate their approval odds, and 5 delayed booking flights solely out of immigration fear.
               </div>
             </div>
 
@@ -3472,7 +3404,7 @@
   </section>
 
   <!-- ========================================================
-       10: GLIDE OS (THE SOLUTION)
+       10: GLIDE OS (THE SOLUTION) (DARK)
   ======================================================== -->
   <section class="second-hero-sec" id="reveal">
     <div class="W">
@@ -3528,7 +3460,7 @@
   </section>
 
   <!-- ========================================================
-       11: WHY GLIDE WINS DOSSIER
+       11: WHY GLIDE WINS DOSSIER (PAPER)
   ======================================================== -->
   <section class="section chapter paper-canvas" id="why">
     <div class="W">
@@ -3615,7 +3547,7 @@
   </section>
 
   <!-- ========================================================
-       12: PRODUCT MANAGEMENT STRATEGY
+       12: PRODUCT MANAGEMENT STRATEGY (DARK)
   ======================================================== -->
   <section class="section chapter" id="pmthink">
     <div class="W">
@@ -3856,7 +3788,7 @@
   </section>
 
   <!-- ========================================================
-       13: PROTOTYPE (5 CORE FLOWS)
+       13: PROTOTYPE (5 CORE FLOWS) (PAPER)
   ======================================================== -->
   <section class="section chapter paper-canvas" id="prototype">
     <div class="W">
@@ -4006,7 +3938,7 @@
   </section>
 
   <!-- ========================================================
-       14: GROWTH ENGINE · FLYWHEEL
+       14: GROWTH ENGINE · FLYWHEEL (DARK)
   ======================================================== -->
   <section class="section chapter" id="flywheel">
     <div class="W">
@@ -4072,7 +4004,7 @@
   </section>
 
   <!-- ========================================================
-       15: NORTH STAR METRICS (TARGET VALIDATION MODEL)
+       15: NORTH STAR METRICS (PAPER)
   ======================================================== -->
   <section class="section chapter paper-canvas" id="metrics">
     <div class="W">
@@ -4143,159 +4075,104 @@
   </section>
 
   <!-- ========================================================
-       16: BUSINESS MODEL · THE MATH (ECONOMICS)
+       16: WHAT CHANGED MY MIND (DARK)
   ======================================================== -->
-  <section class="section chapter" id="econ">
-    <div class="W">
-      <div class="eyebrow-golden">Business Model · The Math</div>
-      <h2 class="section-title">Does the money <span class="hl">actually work?</span></h2>
-      <p style="color:var(--muted); max-width:64ch;">A product thesis isn't a business until the unit economics have a credible path to sustainable scale.</p>
-
-      <div class="econ-formula-dark">
-        <div class="econ-formula-flow-dark">
-          <div class="ef-step-dark"><span class="ef-num-dark">$520</span><span class="ef-lbl-dark">Avg Trip Value</span></div>
-          <span style="font-size:1.5rem; color:var(--muted-dim);">→</span>
-          <div class="ef-step-dark"><span class="ef-num-dark">$58</span><span class="ef-lbl-dark">Net Revenue / Booking</span></div>
-          <span style="font-size:1.5rem; color:var(--muted-dim);">×</span>
-          <div class="ef-step-dark"><span class="ef-num-dark">1.8 × 2.5yr</span><span class="ef-lbl-dark">Bookings/yr × Lifespan</span></div>
-          <span style="font-size:1.5rem; color:var(--muted-dim);">=</span>
-          <div class="ef-step-dark"><span class="ef-num-dark" style="color:var(--signal-bright);">$261</span><span class="ef-lbl-dark">Lifetime Value (LTV)</span></div>
-          <span style="font-size:1.5rem; color:var(--muted-dim);">÷</span>
-          <div class="ef-step-dark"><span class="ef-num-dark">$42</span><span class="ef-lbl-dark">Paid CAC (Yr 1)</span></div>
-          <span style="font-size:1.5rem; color:var(--muted-dim);">=</span>
-          <div class="ef-step-dark final"><span class="ef-num-dark">6.2×</span><span class="ef-lbl-dark">Yr 1 Return / User</span></div>
-        </div>
-      </div>
-
-      <div class="econ-grid-dark">
-        <div class="econ-card-dark">
-          <span class="econ-card-title-dark">Revenue / Booking</span>
-          <div class="econ-row-dark"><span>Avg booking value</span><span>$520</span></div>
-          <div class="econ-row-dark"><span>Blended take rate (9%)</span><span>$47</span></div>
-          <div class="econ-row-dark"><span>Cross-sell attach (Visa, eSIM)</span><span>+$11</span></div>
-          <div class="econ-row-dark" style="font-weight:700;"><span>Net revenue / booking</span><span class="econ-val-good-dark">$58</span></div>
-          <p class="econ-note-dark">OTA commission is low risk core; cross-sell attach is where unified context wins.</p>
-        </div>
-
-        <div class="econ-card-dark">
-          <span class="econ-card-title-dark">Acquisition Cost</span>
-          <div class="econ-row-dark"><span>Paid CAC (Year 1 baseline)</span><span>$42</span></div>
-          <div class="econ-row-dark"><span>Organic via community (Year 2 model)</span><span>~40%</span></div>
-          <div class="econ-row-dark" style="font-weight:700;"><span>Blended CAC target (Year 2)</span><span class="econ-val-good-dark">$28</span></div>
-          <p class="econ-note-dark">Paid CAC drives initial traction ($42 → 6.2× LTV:CAC); organic community referrals model a blended target of $28 (upside 9.3×).</p>
-        </div>
-
-        <div class="econ-card-dark">
-          <span class="econ-card-title-dark">Lifetime Value</span>
-          <div class="econ-row-dark"><span>Net revenue / booking</span><span>$58</span></div>
-          <div class="econ-row-dark"><span>Bookings / user / yr</span><span>1.8</span></div>
-          <div class="econ-row-dark"><span>Avg lifespan</span><span>2.5 yrs</span></div>
-          <div class="econ-row-dark" style="font-weight:700;"><span>Total LTV Contribution</span><span class="econ-val-good-dark">$261</span></div>
-          <p class="econ-note-dark">Low frequency caps travel LTV. Trip Vault + community drives retention between trips.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================
-       17: WHAT CHANGED MY MIND
-  ======================================================== -->
-  <section class="section chapter paper-canvas" id="changed-mind">
+  <section class="section chapter" id="changed-mind">
     <div class="W">
       <div class="eyebrow-golden">What Changed My Mind</div>
       <h2 class="section-title">Where research <span class="hl">proved me wrong.</span></h2>
 
-      <div class="mind-flips-paper">
-        <div class="flip-paper">
-          <div><div class="flip-lbl-paper">I Believed</div><div class="flip-txt-paper">The core problem was checkout conversion friction.</div></div>
-          <div class="flip-arrow-paper">→</div>
-          <div><div class="flip-lbl-paper">Research Showed</div><div class="flip-txt-paper">Planning doubt was the bigger pain. Travelers spent weeks deciding before checkout.</div></div>
-          <div class="flip-evidence-paper">What I did: Repositioned entire thesis to "the layer that reduces planning fragmentation".</div>
+      <div class="mind-flips-dark">
+        <div class="flip-dark">
+          <div><div class="flip-lbl-dark">I Believed</div><div class="flip-txt-dark">The core problem was checkout conversion friction.</div></div>
+          <div class="flip-arrow-dark">→</div>
+          <div><div class="flip-lbl-dark">Research Showed</div><div class="flip-txt-dark">Planning doubt was the bigger pain. Travelers spent weeks deciding before checkout.</div></div>
+          <div class="flip-evidence-dark">What I did: Repositioned entire thesis to "the layer that reduces planning fragmentation".</div>
         </div>
 
-        <div class="flip-paper">
-          <div><div class="flip-lbl-paper">I Believed</div><div class="flip-txt-paper">Visa was an auxiliary document upload near the end.</div></div>
-          <div class="flip-arrow-paper">→</div>
-          <div><div class="flip-lbl-paper">Research Showed</div><div class="flip-txt-paper">Visa anxiety was a top-of-funnel conversion blocker.</div></div>
-          <div class="flip-evidence-paper">What I did: Moved Visa Intelligence from #4 to #2, making it an acquisition wedge.</div>
+        <div class="flip-dark">
+          <div><div class="flip-lbl-dark">I Believed</div><div class="flip-txt-dark">Visa was an auxiliary document upload near the end.</div></div>
+          <div class="flip-arrow-dark">→</div>
+          <div><div class="flip-lbl-dark">Research Showed</div><div class="flip-txt-dark">Visa anxiety was a top-of-funnel conversion blocker.</div></div>
+          <div class="flip-evidence-dark">What I did: Moved Visa Intelligence from #4 to #2, making it an acquisition wedge.</div>
         </div>
 
-        <div class="flip-paper">
-          <div><div class="flip-lbl-paper">I Believed</div><div class="flip-txt-paper">An AI itinerary generator should be the flagship wow feature.</div></div>
-          <div class="flip-arrow-paper">→</div>
-          <div><div class="flip-lbl-paper">Research Showed</div><div class="flip-txt-paper">Users wanted trust and consolidation first. Flashy generation solved nothing.</div></div>
-          <div class="flip-evidence-paper">What I did: Built simple planning tools first; demoted generative engine to Phase 2.</div>
+        <div class="flip-dark">
+          <div><div class="flip-lbl-dark">I Believed</div><div class="flip-txt-dark">An AI itinerary generator should be the flagship wow feature.</div></div>
+          <div class="flip-arrow-dark">→</div>
+          <div><div class="flip-lbl-dark">Research Showed</div><div class="flip-txt-dark">Users wanted trust and consolidation first. Flashy generation solved nothing.</div></div>
+          <div class="flip-evidence-dark">What I did: Built simple planning tools first; demoted generative engine to Phase 2.</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ========================================================
-       18: EXECUTIVE SUMMARY · PRODUCT LEADERSHIP
+       17: EXECUTIVE SUMMARY · PRODUCT LEADERSHIP (PAPER)
   ======================================================== -->
-  <section class="section chapter" id="hire-case">
+  <section class="section chapter paper-canvas" id="hire-case">
     <div class="W">
       <div class="eyebrow-golden">Executive Summary · Product Leadership</div>
-      <h2 class="section-title">Why this matters to a <span class="hl">hiring team.</span></h2>
-      <p style="color:var(--muted); max-width:68ch;">
-        This case study is not a hypothetical redesign. It demonstrates how I think, scope, cut, and lead product strategy from discovery through unit economics:
+      <h2 class="section-title">Why this matters to a <em>hiring team.</em></h2>
+      <p style="color:var(--paper-muted); max-width:68ch;">
+        This case study is not a hypothetical redesign. It demonstrates how I think, scope, cut, and lead product strategy from discovery through execution:
       </p>
 
       <div class="hire-stage-container">
         <div class="hire-pillars-grid">
-          <div class="hire-pillar-card">
-            <div class="hire-pillar-badge">
-              <span class="live-status-dot"></span>
+          <div class="hire-pillar-card-paper">
+            <div class="hire-pillar-badge-paper">
+              <span class="audit-dot"></span>
               <span>01 · Discovery Rigor</span>
             </div>
-            <div class="hire-pillar-title">Qualitative to Quantifiable</div>
-            <p class="hire-pillar-desc">
-              Extracted systemic architecture gaps from 20 user interviews. Mapped emotional friction directly into an unexploited $983B market consolidation wedge.
+            <div class="hire-pillar-title-paper">Qualitative to Quantifiable</div>
+            <p class="hire-pillar-desc-paper">
+              Extracted systemic architecture gaps from 23 user interviews across 4 countries. Mapped emotional friction directly into an unexploited $983B market consolidation wedge.
             </p>
           </div>
 
-          <div class="hire-pillar-card">
-            <div class="hire-pillar-badge">
-              <span class="live-status-dot"></span>
+          <div class="hire-pillar-card-paper">
+            <div class="hire-pillar-badge-paper">
+              <span class="audit-dot"></span>
               <span>02 · Strategic Judgment</span>
             </div>
-            <div class="hire-pillar-title">Ruthless De-Scoping</div>
-            <p class="hire-pillar-desc">
+            <div class="hire-pillar-title-paper">Ruthless De-Scoping</div>
+            <p class="hire-pillar-desc-paper">
               Killed 14 cosmetic features before Sprint 1. Focused engineering bandwidth on the highest-defensibility supply and data opportunities.
             </p>
           </div>
 
-          <div class="hire-pillar-card">
-            <div class="hire-pillar-badge">
-              <span class="live-status-dot"></span>
+          <div class="hire-pillar-card-paper">
+            <div class="hire-pillar-badge-paper">
+              <span class="audit-dot"></span>
               <span>03 · Commercial Viability</span>
             </div>
-            <div class="hire-pillar-title">Unit Economics First</div>
-            <p class="hire-pillar-desc">
-              Modeled a resilient 6.2× LTV:CAC flywheel. Designed organic community loops to reduce reliance on paid acquisition over time.
+            <div class="hire-pillar-title-paper">Journey-First Architecture</div>
+            <p class="hire-pillar-desc-paper">
+              Modeled a continuous user workflow. Designed organic community loops to build defensibility and reduce reliance on paid customer acquisition over time.
             </p>
           </div>
 
-          <div class="hire-pillar-card">
-            <div class="hire-pillar-badge">
-              <span class="live-status-dot"></span>
+          <div class="hire-pillar-card-paper">
+            <div class="hire-pillar-badge-paper">
+              <span class="audit-dot"></span>
               <span>04 · Cross-Functional Clarity</span>
             </div>
-            <div class="hire-pillar-title">Documented Tradeoffs</div>
-            <p class="hire-pillar-desc">
+            <div class="hire-pillar-title-paper">Documented Tradeoffs</div>
+            <p class="hire-pillar-desc-paper">
               Maintained ADR ledgers detailing explicit risks, unknown variables, and measurable validation gates so engineering and business stay aligned.
             </p>
           </div>
         </div>
 
-        <div class="hire-takeaway-hero">
-          <div class="hire-quote-block">
+        <div class="hire-takeaway-paper">
+          <div class="hire-quote-block-paper">
             "I take ambiguous, messy user pain points, eliminate vanity scope, align engineering around defensible moats, and <em>build products that make commercial sense.</em>"
           </div>
-          <div class="hire-author-block">
-            <div class="hire-author-name">Avinash R</div>
-            <div class="hire-author-title">Product Manager · Glide OS</div>
-            <div class="hire-author-sub">Case study available for deep-dive discussions</div>
+          <div class="hire-author-block-paper">
+            <div class="hire-author-name-paper">Avinash R</div>
+            <div class="hire-author-title-paper">Product Manager · Glide OS</div>
+            <div class="hire-author-sub-paper">Case study available for deep-dive discussions</div>
           </div>
         </div>
       </div>
@@ -4303,7 +4180,7 @@
   </section>
 
   <!-- ========================================================
-       19: ABOUT AVINASH · LET'S CONNECT
+       18: ABOUT AVINASH · LET'S CONNECT (DARK)
   ======================================================== -->
   <section class="section chapter" id="closing" style="text-align: center;">
     <div class="W">
@@ -4324,11 +4201,11 @@
           </div>
         </a>
 
-        <a href="https://avinash0431.github.io/beyond-my-resume/" target="_blank" rel="noopener" class="fin-card">
-          <span class="fin-card-ico">📂</span>
+        <a href="https://avinash0431.github.io/the-thinking/" target="_blank" rel="noopener" class="fin-card">
+          <span class="fin-card-ico">🧠</span>
           <div style="text-align: left;">
-            <div class="fin-card-title">Beyond My Resume</div>
-            <span class="fin-card-sub">My other work</span>
+            <div class="fin-card-title">The Thinking</div>
+            <span class="fin-card-sub">Product philosophy</span>
           </div>
         </a>
 
@@ -4374,7 +4251,7 @@
       <a href="#synthesis">Strategy</a>
       <a href="#reveal">Glide OS</a>
       <a href="#prototype">Prototype</a>
-      <a href="#econ">Economics</a>
+      <a href="#metrics">Metrics</a>
       <a href="https://linkedin.com/in/avinashr027" target="_blank" rel="noopener">LinkedIn</a>
     </div>
   </div>
@@ -4418,7 +4295,7 @@
   });
 
   // Strict 6-Item Linear Navigation Sequence
-  const navSequence = ['brief', 'competitor', 'synthesis', 'reveal', 'prototype', 'econ'];
+  const navSequence = ['brief', 'competitor', 'synthesis', 'reveal', 'prototype', 'metrics'];
   const desktopLinks = document.querySelectorAll('#navlinks a');
   const mobileLinks = document.querySelectorAll('.mobile-nav-list a');
 
@@ -4437,9 +4314,9 @@
       document.body.clientHeight, document.documentElement.clientHeight
     );
 
-    // If near bottom of the page, automatically lock to Economics
+    // If near bottom of the page, automatically lock to Metrics
     if (scrollY + winHeight >= docHeight - 140) {
-      setActiveTab('econ');
+      setActiveTab('metrics');
       return;
     }
 
@@ -4722,7 +4599,7 @@
           <div style="flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:9px 14px; font-size:0.78rem; color:#8FA1B7; display:flex; align-items:center; gap:8px;">
             <span>🔍</span> Search Tokyo, Kyoto, Paris...
           </div>
-          <button style="background:#0E7B6C; color:#fff; border-radius:12px; padding:9px 16px; font-size:0.78rem; font-weight:700;">Find</button>
+          <button style="background:#0E7B6C; color:#fff; border-radius:12px; padding:9px 16px; font-size:0.78rem; font-weight:700; border:none; cursor:pointer;">Find</button>
         </div>
       </div>
 
@@ -4894,8 +4771,7 @@
             </div>
           </div>
         </div>
-
-        <div class="ps-box">
+<div class="ps-box">
           <div style="font-size:0.72rem; font-weight:800; color:#718096; text-transform:uppercase; margin-bottom:12px;">Unified Cart (3 Items)</div>
           
           <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px dashed #E2E8F0;">
